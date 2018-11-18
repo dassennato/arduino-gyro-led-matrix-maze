@@ -1,4 +1,4 @@
-#include "LedControl.h"
+#include <LedControl.h>
 #include<Wire.h>
 
 /**
@@ -31,7 +31,7 @@ const int LEVELS_COLUMNS = LEVELS_ROWS; // number of columns of each level
 const int GAME_SPEED = 70; // The higher number the slower game
 const int GAME_WIN_BLINKS = 4; // The number of blinks to show once a level is won
 const int GAME_WIN_BLINKS_SPEED = 50; // The speed of the level win blinks. The higher the slower.
-const float MOVEMENT_FORZE_OFFSET = 0.20; // The amount of forze needed from the gyro to move the player
+const float MOVEMENT_FORZE_OFFSET = 0.25; // The amount of forze needed from the gyro to move the player
 
 /**
  * 's': Start position
@@ -121,15 +121,18 @@ void loop() {
   hidePlayer();
   delay(GAME_SPEED / 2);
 
-  // GyroX
-  if (gForzeY > MOVEMENT_FORZE_OFFSET) {
-    movePlayer(Left);
-  } else if(gForzeY < -MOVEMENT_FORZE_OFFSET) {
-    movePlayer(Right);
-  } else if(gForzeZ > MOVEMENT_FORZE_OFFSET) {
-    movePlayer(Down);
-  } else if(gForzeZ < -MOVEMENT_FORZE_OFFSET) {
-    movePlayer(Up);
+  // Gyro movement
+  if (gForzeY > MOVEMENT_FORZE_OFFSET && tryToMove(Left)) {
+    Serial.println("Moved Left");
+  }
+  else if(gForzeY < -MOVEMENT_FORZE_OFFSET && tryToMove(Right)) {
+    Serial.println("Moved Right");
+  }
+  else if(gForzeZ > MOVEMENT_FORZE_OFFSET && tryToMove(Down)) {
+    Serial.println("Moved Down");
+  }
+  else if(gForzeZ < -MOVEMENT_FORZE_OFFSET && tryToMove(Up)) {
+    Serial.println("Moved Up");
   }
 
   showPlayer();
@@ -219,7 +222,13 @@ void printLevel() {
   }
 }
 
-void movePlayer(Move movement) {
+/**
+ * Tries to move the player to a given direction.
+ * The movement is allowed based on MIN_CURRENT and MAX_CURRENT values 
+ * and also if the desired movement is towards an allowed movement placed, i.e. 'X', 's', 'f'
+ * Returns true if the movement was successful, otherwise false
+ */
+boolean tryToMove(Move movement) {
   int possibleX = currentX;
   int possibleY = currentY;
 
@@ -237,7 +246,9 @@ void movePlayer(Move movement) {
   if (levels[currentLevel][possibleX][possibleY] != 'X') {
     currentX = possibleX;
     currentY = possibleY;
+    return true;
   }
+  return false;
 }
 
 void checkWin() {
