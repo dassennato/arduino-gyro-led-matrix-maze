@@ -263,6 +263,11 @@ boolean tryToMove(Move movement) {
     possibleY++;
   }
 
+  // Shortcircuit if a movement wouldn't happen
+  if (possibleX == currentX && possibleY == currentY) {
+    return false;
+  }
+
   // Checks what would happen if we apply the possible new position
   if (levels[currentLevel][possibleX][possibleY] != 'X') {
     currentX = possibleX;
