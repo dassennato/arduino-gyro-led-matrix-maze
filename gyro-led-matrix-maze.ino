@@ -25,21 +25,19 @@ float rotX, rotY, rotZ, gForzeX, gForzeY, gForzeZ; // processed gyro data
 /**
  * GAME
  */
-const int LEVELS_COUNT = 3; // number of available leves FIXME: We have to calculate this instead of declaring it
 const int LEVELS_ROWS = 8; // number of rows of each level
 const int LEVELS_COLUMNS = LEVELS_ROWS; // number of columns of each level
 const int GAME_SPEED = 70; // The higher number the slower game
 const int GAME_WIN_BLINKS = 4; // The number of blinks to show once a level is won
 const int GAME_WIN_BLINKS_SPEED = 50; // The speed of the level win blinks. The higher the slower.
 const float MOVEMENT_FORZE_OFFSET = 0.25; // The amount of forze needed from the gyro to move the player
-
 /**
  * 's': Start position
  * 'f': Finish position
  * 'X': Wall
  * ' ': Movement zone
  */
-char levels[LEVELS_COUNT][LEVELS_ROWS][LEVELS_COLUMNS] = {
+const char LEVELS[][LEVELS_ROWS][LEVELS_COLUMNS] = {
   // Level 1
   {
     {'X','s','X','X','X','X','X','X'},
@@ -87,6 +85,7 @@ char levels[LEVELS_COUNT][LEVELS_ROWS][LEVELS_COLUMNS] = {
   }
   */
 };
+const int LEVELS_COUNT = (sizeof LEVELS) / LEVELS_ROWS / LEVELS_COLUMNS; // number of available leves
 
 /**
  * GAME STATE
@@ -209,10 +208,10 @@ void initLevel() {
   // sets startX, startY, finishX and finishY
   for (int x=0; x<LEVELS_ROWS; x++) {
     for (int y=0; y<LEVELS_COLUMNS; y++) {
-      if (levels[currentLevel][x][y] == 's') {
+      if (LEVELS[currentLevel][x][y] == 's') {
         startX = x;
         startY = y;
-      } else if (levels[currentLevel][x][y] == 'f') {
+      } else if (LEVELS[currentLevel][x][y] == 'f') {
         finishX = x;
         finishY = y;
       }
@@ -236,7 +235,7 @@ void hidePlayer() {
 void printLevel() {
   for (int x=0; x<LEVELS_ROWS; x++) {
     for (int y=0; y<LEVELS_COLUMNS; y++) {
-      if (levels[currentLevel][x][y] == 'X') {
+      if (LEVELS[currentLevel][x][y] == 'X') {
         lc.setLed(0,x,y,true);  
       }
     }
@@ -269,7 +268,7 @@ boolean tryToMove(Move movement) {
   }
 
   // Checks what would happen if we apply the possible new position
-  if (levels[currentLevel][possibleX][possibleY] != 'X') {
+  if (LEVELS[currentLevel][possibleX][possibleY] != 'X') {
     currentX = possibleX;
     currentY = possibleY;
     return true;
@@ -278,7 +277,7 @@ boolean tryToMove(Move movement) {
 }
 
 void checkWin() {
-  if (levels[currentLevel][currentX][currentY] == 'f') {
+  if (LEVELS[currentLevel][currentX][currentY] == 'f') {
     showWinScreen();
     changeToNextLevel();
     initLevel();
