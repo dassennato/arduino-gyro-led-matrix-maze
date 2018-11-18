@@ -119,7 +119,7 @@ void setup() {
    */
   lc.shutdown(0, false);
   /* Set the brightness to a medium values */
-  lc.setIntensity(0, 8);
+  lc.setIntensity(0, LEDS_BRIGHTNESS);
   /* and clear the display */
   lc.clearDisplay(0);
 
@@ -167,13 +167,16 @@ void fetchGyro() {
   GyY=Wire.read()<<8|Wire.read();  // 0x45 (GYRO_YOUT_H) & 0x46 (GYRO_YOUT_L)
   GyZ=Wire.read()<<8|Wire.read();  // 0x47 (GYRO_ZOUT_H) & 0x48 (GYRO_ZOUT_L)
 
-  rotX = GyX / 131.0;
-  rotY = GyY / 131.0;
-  rotZ = GyZ / 131.0;
+  const float gyroSensitivity = 131.0;
+  const float accSensitivity = 16384.0;
 
-  gForzeX = AcX / 16384.0;
-  gForzeY = AcY / 16384.0;
-  gForzeZ = AcZ / 16384.0;
+  rotY = GyY / gyroSensitivity;
+  rotX = GyX / gyroSensitivity;
+  rotZ = GyZ / gyroSensitivity;
+
+  gForzeX = AcX / accSensitivity;
+  gForzeY = AcY / accSensitivity;
+  gForzeZ = AcZ / accSensitivity;
 }
 
 void debugGyro() {
