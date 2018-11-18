@@ -134,7 +134,12 @@ void loop() {
   hidePlayer();
   delay(GAME_SPEED / 2);
 
-  // Gyro movement
+  /**
+   * NOTE: The following movement directions are setted supposing 
+   * the LED Matrix and the gyro are directly connected to a 
+   * breadboard without wires.
+   * If you have a different setup you may need to modify this:
+   */
   if (gForzeY > MOVEMENT_FORZE_OFFSET && tryToMove(Left)) {
     Serial.println("Moved Left");
   }
